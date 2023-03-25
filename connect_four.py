@@ -35,6 +35,8 @@ def player_turn():
         valid = check_valid_col(col)
     col = col -1
     row = drop_token(col)
+    
+    #print("Placing chip at ", row, " , ", col)
 
     #check win
     win = check_win(row, col)
@@ -50,7 +52,7 @@ def player_turn():
 
 
 def check_valid_col(col):
-    print(type(col))
+    #print(type(col))
     if isinstance(col, int) ==  False:
         print("You did not enter a valid integer")
         return False
@@ -96,17 +98,15 @@ def check_horizontal(row,col):
         token = 'x'
     else:
         token = 'o'
-
-    
     #   Xxxx
     #should short circuit before reaching into out of range idx
     if(col +3 < cols) and (board[row][col+1] == board[row][col+2] == board[row][col+3] == token):
             return True
     #xXxx
-    elif(col -1 >= 0) and (board[row][col-1] == board[row][col+2] == board[row][col+3] == token):
+    elif(col -1 >= 0 and col + 2 <cols) and (board[row][col-1] == board[row][col+1] == board[row][col+2] == token):
          return True
     #xxXx
-    elif(col -2 >= 0) and (board[row][col-2] == board[row][col-1] == board[row][col+1] == token):
+    elif(col -2 >= 0 and col +1 < cols) and (board[row][col-2] == board[row][col-1] == board[row][col+1] == token):
             return True
     #xxxX  
     elif(col -3 >= 0 ) and(board[row][col-3] == board[row][col-2] == board[row][col-1] == token):
@@ -138,17 +138,30 @@ def check_forward_diag(row,col):
         token = 'x'
     else:
         token = 'o'
-    
-    if(col +3 < cols and row +3 < rows) and (board[row+1][col+1] == board[row+2][col+2] == board[row+3][col+3] == token):
+    #...x
+    #..x
+    #.x
+    #X
+    if(col +3 < cols and row -3 >=0) and (board[row-1][col+1] == board[row-2][col+2] == board[row-3][col+3] == token):
         return True
     
-    elif(col -1 >= 0 and row +2 < rows) and (board[row-1][col-1] == board[row+2][col+2] == board[row+3][col+3] == token):
+    #...x
+    #..x
+    #.X
+    #x
+    elif((col -1 >= 0 and col +2 < cols) and (row +1 < rows and row -2 >= 0)) and (board[row+1][col-1] == board[row-1][col+1] == board[row-2][col+1] == token):
          return True
-    #xxXx
-    elif(col -2 >= 0 and row + 1< rows) and (board[row-2][col-2] == board[row-1][col-1] == board[row+1][col+1] == token):
+    #...x
+    #..X
+    #.x
+    #x
+    elif((col -2 >= 0 and col +1 < cols )and (row + 2< rows and row -1 >=0)) and (board[row+2][col-2] == board[row+1][col-1] == board[row-1][col+1] == token):
             return True
-    #xxxX  
-    elif(col -3 >= 0 and row < rows) and(board[row-3][col-3] == board[row-2][col-2] == board[row-1][col-1] == token):
+    #...X
+    #..x
+    #.x
+    #x 
+    elif(col -3 >= 0 and row + 3 < rows) and(board[row+3][col-3] == board[row+2][col-2] == board[row+1][col-1] == token):
             return True
     else:
         return False
@@ -171,24 +184,26 @@ def check_back_diag(row,col):
     #.x
     #..X
     #...x
-    elif(col +1 <cols and row -2 <=0) and (board[row+1][col+1] == board[row-2][col-2] == board[row-3][col-3] == token):
+    elif((col +1 <cols and col -2 >= 0) and (row -2 <=0 and row +1 < rows)) and (board[row+1][col+1] == board[row-1][col-1] == board[row-2][col-2] == token):
          return True
     #x
     #.X
     #..x
     #...x
-    elif(col +2 < cols and row - 1 <= 0) and (board[row+2][col+2] == board[row+1][col+1] == board[row-1][col-1] == token):
+    elif((col +2 < cols and col -1 >=0) and (row - 1 <= 0 and row + 2 < rows)) and (board[row+2][col+2] == board[row+1][col+1] == board[row-1][col-1] == token):
             return True
     #X
     #.x
     # ..x
     # ...x  
-    elif(col + 3 < cols and row >= 0) and ((board[row+3][col+3] == board[row+2][col+2] == board[row+1][col+1] == token)):
+    elif(col + 3 < cols and row + 3 < rows) and ((board[row+3][col+3] == board[row+2][col+2] == board[row+1][col+1] == token)):
         return True
     else:
         return False
 
 
+
+#main Portion ===============================================================================
 win = False
 display_board()
 while(win == False):
